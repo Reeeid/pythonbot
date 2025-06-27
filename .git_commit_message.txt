@@ -1,0 +1,1 @@
+feat: Add new src files and update .gitignore to ignore templates
