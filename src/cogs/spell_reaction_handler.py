@@ -5,10 +5,6 @@ import asyncio
 class SpellReactionHandlerCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.tracked_messages = {} # {message_id: [spell_id1, spell_id2, ...] }
-
-    def register_spell_list_message(self, message_id: int, spell_ids: list[int]):
-        self.tracked_messages[message_id] = spell_ids
 
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction, user):
@@ -16,11 +12,16 @@ class SpellReactionHandlerCog(commands.Cog):
         if user.bot or not reaction.message.guild:
             return
 
-        # 追跡対象のメッセージか確認
-        if reaction.message.id not in self.tracked_messages:
+        # メッセージにEmbedがあり、フッターに情報が含まれているか確認
+        if not reaction.message.embeds or not reaction.message.embeds[0].footer or not reaction.message.embeds[0].footer.text.startswith("spell_ids:"):
             return
 
-        spell_ids_on_message = self.tracked_messages[reaction.message.id]
+        try:
+            spell_ids_str = reaction.message.embeds[0].footer.text.split(":")[1]
+            spell_ids_on_page = [int(id) for id in spell_ids_str.split(",")]
+        except (IndexError, ValueError):
+            return # フッターの形式が不正な場合は無視
+
         emojis = {"1️⃣": 0, "2️⃣": 1, "3️⃣": 2, "4️⃣": 3, "5️⃣": 4, "6️⃣": 5}
 
         # 有効な絵文字か確認
@@ -30,11 +31,11 @@ class SpellReactionHandlerCog(commands.Cog):
         index = emojis[str(reaction.emoji)]
 
         # 絵文字が指す呪文がリストの範囲内か確認
-        if index >= len(spell_ids_on_message):
+        if index >= len(spell_ids_on_page):
             await reaction.remove(user) # 無効なリアクションは削除
             return
 
-        target_spell_id = spell_ids_on_message[index]
+        target_spell_id = spell_ids_on_page[index]
 
         user_spell_sets_cog = self.bot.get_cog("UserSpellSetsCog")
         if not user_spell_sets_cog:

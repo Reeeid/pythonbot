@@ -136,14 +136,14 @@ class SpellbookCog(commands.Cog):
             return spells
 
     def create_spell_list_embeds(self, spells):
-        chunked_spells = [spells[i:i + 8] for i in range(0, len(spells), 8)]
+        chunked_spells = [spells[i:i + 6] for i in range(0, len(spells), 6)]
         if not chunked_spells:
-            return [discord.Embed(title="検索結果", description="条件に合う呪文は見つかりませんでした。", color=discord.Color.red())], []
+            return [discord.Embed(title="検索結果", description="条件に合う呪文は見つかりませんでした。", color=discord.Color.red())]
 
         embeds = []
-        first_page_spell_ids = []
         for i, chunk in enumerate(chunked_spells):
             embed = discord.Embed(title=f"呪文リスト ({i+1}/{len(chunked_spells)})", color=discord.Color.blue())
+            page_spell_ids = [str(spell['ID']) for spell in chunk]
             for spell in chunk:
                 description = spell['description']
                 if description and len(description) > 100:
@@ -160,10 +160,9 @@ class SpellbookCog(commands.Cog):
                           f"------------------>>",
                     inline=False
                 )
+            embed.set_footer(text=f"spell_ids:{','.join(page_spell_ids)}")
             embeds.append(embed)
-            if i == 0: # 最初のページのみ呪文IDを記録
-                first_page_spell_ids = [spell['ID'] for spell in chunk]
-        return embeds, first_page_spell_ids
+        return embeds
 
     def create_spell_detail_embed(self, spell):
         embed = discord.Embed(title=f"呪文詳細: {spell['name']}", color=discord.Color.green())
@@ -200,7 +199,7 @@ class SpellbookCog(commands.Cog):
     @commands.slash_command(name="spell", description="呪文を検索し、一覧表示します。")
     async def spell(self, ctx: discord.ApplicationContext, class_name: Option(str, description="WIZ,WAR,CRE,SOR,DOR,BRD,PRD,REN", default=None), level: Option(int, description="0-9", default=None)):
         filtered_spells = await self.filter_spells(class_name, level)
-        embeds, first_page_spell_ids = self.create_spell_list_embeds(filtered_spells)
+        embeds = self.create_spell_list_embeds(filtered_spells)
         
         if not embeds:
             await ctx.respond("条件に合う呪文は見つかりませんでした。", ephemeral=True)
@@ -210,16 +209,12 @@ class SpellbookCog(commands.Cog):
         message = await paginator.respond(ctx.interaction, ephemeral=False)
 
         # 最初のページに表示された呪文に対してのみリアクションを追加
-        if first_page_spell_ids:
+        if len(embeds) > 0 and embeds[0].footer.text:
             emojis = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣"]
-            for i, spell_id in enumerate(first_page_spell_ids):
+            num_spells = len(embeds[0].footer.text.split(":")[1].split(","))
+            for i in range(num_spells):
                 if i < len(emojis):
                     await message.add_reaction(emojis[i])
-            
-            # SpellReactionHandlerCogにメッセージIDと呪文IDのリストを登録
-            spell_reaction_cog = self.bot.get_cog("SpellReactionHandlerCog")
-            if spell_reaction_cog:
-                spell_reaction_cog.register_spell_list_message(message.id, first_page_spell_ids)
 
     @commands.slash_command(name="spellid", description="指定したIDの呪文の詳細を表示します。")
     async def spellid(self, ctx: discord.ApplicationContext, spell_id: int):
