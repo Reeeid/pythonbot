@@ -105,6 +105,13 @@ class SpellbookCog(commands.Cog):
             cursor = await db.execute('SELECT * FROM spells WHERE ID = ?', (spell_id,))
             spell = await cursor.fetchone()
             return spell
+        
+    async def get_spell_by_name(self, spell_name: str):
+        async with aiosqlite.connect(self.db_path) as db:
+            db.row_factory = aiosqlite.Row
+            cursor = await db.execute('SELECT * FROM spells WHERE name = ?', (spell_name,))
+            spell = await cursor.fetchone()
+            return spell
 
     async def filter_spells(self, class_name: str = None, level: int = None):
         async with aiosqlite.connect(self.db_path) as db:
@@ -219,6 +226,15 @@ class SpellbookCog(commands.Cog):
     @commands.slash_command(name="spellid", description="指定したIDの呪文の詳細を表示します。")
     async def spellid(self, ctx: discord.ApplicationContext, spell_id: int):
         spell = await self.get_spell_by_id(spell_id)
+        if spell:
+            embed = self.create_spell_detail_embed(spell)
+            await ctx.respond(embed=embed)
+        else:
+            await ctx.respond("指定されたIDの呪文は見つかりませんでした。", ephemeral=True)
+
+    @commands.slash_command(name="spellname", description="指定した名前の呪文の詳細を表示します。")
+    async def spellname(self, ctx: discord.ApplicationContext, spell_name: str):
+        spell = await self.get_spell_by_name(spell_name)
         if spell:
             embed = self.create_spell_detail_embed(spell)
             await ctx.respond(embed=embed)
