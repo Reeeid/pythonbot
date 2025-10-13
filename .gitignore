@@ -194,3 +194,7 @@ cython_debug/
 
 # Template files
 templates/
+
+# Project data (local only)
+data/
+src/data/
