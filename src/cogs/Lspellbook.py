@@ -173,7 +173,7 @@ class LSpellbookCog(commands.Cog):
                           f"------------------>>",
                     inline=False
                 )
-            embed.set_footer(text=f"spell_ids:{','.join(page_spell_ids)}")
+            embed.set_footer(text=f"lspell_ids:{','.join(page_spell_ids)}")
             embeds.append(embed)
         return embeds
 
