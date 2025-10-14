@@ -9,7 +9,7 @@ class SpellReactionHandlerCog(commands.Cog):
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction, user):
         # ボット自身のリアクションやDMでのリアクションは無視
-        if user.bot or not reaction.message.guild:
+        if user.bot:
             return
 
         # メッセージにEmbedがあり、フッターに情報が含まれているか確認
