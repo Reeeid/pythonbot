@@ -1,0 +1,17 @@
+[33me3af5bb[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mexpr[m[33m, [m[1;31morigin/expr[m[33m)[m HEAD@{0}: pull: Fast-forward
+[33mc54bc1a[m HEAD@{1}: checkout: moving from main to expr
+[33m5410e5b[m[33m ([m[1;32mmain[m[33m)[m HEAD@{2}: rebase (abort): returning to refs/heads/main
+[33mc54bc1a[m HEAD@{3}: checkout: moving from main to expr
+[33m5410e5b[m[33m ([m[1;32mmain[m[33m)[m HEAD@{4}: checkout: moving from 0a65596ceb2706377f31ae8d36cf0eea3ac66456 to main
+[33m0a65596[m HEAD@{5}: pull --rebase origin main (start): checkout 0a65596ceb2706377f31ae8d36cf0eea3ac66456
+[33m5410e5b[m[33m ([m[1;32mmain[m[33m)[m HEAD@{6}: checkout: moving from main to main
+[33m5410e5b[m[33m ([m[1;32mmain[m[33m)[m HEAD@{7}: checkout: moving from expr to main
+[33mc54bc1a[m HEAD@{8}: commit: Adjust spell reaction handler for DM and L sep
+[33m5410e5b[m[33m ([m[1;32mmain[m[33m)[m HEAD@{9}: checkout: moving from main to expr
+[33m5410e5b[m[33m ([m[1;32mmain[m[33m)[m HEAD@{10}: commit: fix:コマンド名の大文字修正
+[33m7ad34b9[m HEAD@{11}: commit: backup
+[33me62f532[m HEAD@{12}: commit: alldone
+[33ma4ed20d[m HEAD@{13}: commit: added req.txt
+[33m7106e30[m HEAD@{14}: commit: fixed
+[33me19b9fa[m HEAD@{15}: commit: all done
+[33m2638464[m HEAD@{16}: clone: from https://github.com/Reeeid/pythonbot.git
